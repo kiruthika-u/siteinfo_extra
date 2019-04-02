@@ -8,54 +8,54 @@ use Drupal\node\Entity\Node;
 use Drupal\Core\Form\ConfigFormBase;
 
 /**
- * Defines NodeToJson class.
- */
+* Defines NodeToJson class.
+*/
 class NodeToJson extends ControllerBase {
 
 
 	/**
-   * Stores the configuration factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactory
-   */
+	* Stores the configuration factory.
+	*
+	* @var \Drupal\Core\Config\ConfigFactory
+	*/
 
-  protected $configFactory;
+	protected $configFactory;
 
 	/**
-   * Stores the error code.
-   */
+	* Stores the error code.
+	*/
 
 	protected $errorCode;
 
 	/**
-	 * Stores the error code.
-	 */
+	* Stores the error code.
+	*/
 
 	protected $responseStatus;
 
 	/**
-	 * Stores the response data.
-	 */
+	* Stores the response data.
+	*/
 
 	protected $date;
 
 
 	/**
-	 * Stores the response data.
-	 */
+	* Stores the response data.
+	*/
 
 	protected $message;
 
 	/**
-   * Display the markup.
-   *
-   * @return array
-   *   Return response as json array.
-   */
+	* Display the markup.
+	*
+	* @return array
+	*   Return response as json array.
+	*/
 
-	 public function getApiResponce($apikey,$nodeid)
-	 {
-		
+	public function getApiResponce($apikey,$nodeid)
+	{
+
 		$this->errorCode = '';
 		$this->responseStatus = '';
 		$this->data = '';
@@ -66,7 +66,7 @@ class NodeToJson extends ControllerBase {
 		$response = new Response();
 		$response->headers->set('Content-Type', 'application/json');
 		$serializer = \Drupal::service('serializer');
-	
+
 		if($siteAPIKey==$apikey)
 		{
 			$node = Node::load($nodeid);
@@ -101,6 +101,6 @@ class NodeToJson extends ControllerBase {
 		$response->setContent(json_encode(array('status' => array('type'=>$this->responseStatus,'code'=>$this->errorCode,'message'=>$this->message), 'content' => $this->data)));
 		return $response;
 
-	 }
+	}
 
 }
