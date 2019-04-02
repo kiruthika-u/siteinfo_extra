@@ -1,45 +1,96 @@
 <?php
 
-namespace Drupal\siteinfo_extra\Form;
+namespace Drupal\siteinfo_extra\Controller;
 
-// Classes referenced in this class:
-use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Controller\ControllerBase;
+use Symfony\Component\HttpFoundation\Response;
+use Drupal\node\Entity\Node;
 use Drupal\Core\Form\ConfigFormBase;
-use Drupal\system\Form\SiteInformationForm;
 
 /**
- * Extending basic site information form.
- */
-class SiteInformationConfigForm extends SiteInformationForm
+* Defines NodeToJson class.
+*/
+class NodeToJson extends ControllerBase
 {
-
-    public function buildForm(array $form, FormStateInterface $form_state)
-    {
-        $config = $this->config('system.site');
-        $form = parent::buildForm($form, $form_state);
-        $form['site_information']['siteapikey'] = [
-        '#type' => 'textfield',
-        '#title' => t('Site API Key'),
-        '#default_value' => $config->get('siteapikey')?$config->get('siteapikey'):'',
-        '#description' => t('This is the key to be used in API request'),
-        '#attributes' => array('placeholder' => t('No API Key yet')),
-        ];
-        $form['actions']['submit']['#value'] = 'Update Configuration';
-        return $form;
-    }
     /**
-    * {@inheritdoc}
+    * Stores the configuration factory.
+    *
+    * @var \Drupal\Core\Config\ConfigFactory
     */
-    public function submitForm(array &$form, FormStateInterface $form_state)
+    
+    protected $configFactory;
+    
+    /**
+    * Stores the error code.
+    */
+    
+    protected $errorCode;
+    
+    /**
+    * Stores the error code.
+    */
+    
+    protected $responseStatus;
+    
+    /**
+    * Stores the response data.
+    */
+    
+    protected $date;
+    
+    
+    /**
+    * Stores the response data.
+    */
+    
+    protected $message;
+    
+    /**
+    * Display the markup.
+    *
+    * @return array
+    *   Return response as json array.
+    */
+    
+    public function getApiResponce($apikey, $nodeid)
     {
-        $updateInfo = $this->config('system.site')
-        ->set('siteapikey', $form_state->getValue('siteapikey'))
-        ->save();
-        parent::submitForm($form, $form_state);
-        if ($updateInfo) {
-            if ($form_state->getValue('siteapikey')!='') {
-                drupal_set_message(t('API Key %key has been updated.', array('%key'=>$form_state->getValue('siteapikey'))), 'status');
+        $this->errorCode = '';
+        $this->responseStatus = '';
+        $this->data = '';
+        
+        $config = $this->config('system.site');
+        $siteAPIKey = $config->get('siteapikey');
+        
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/json');
+        $serializer = \Drupal::service('serializer');
+        
+        if ($siteAPIKey==$apikey) {
+            $node = Node::load($nodeid);
+            if ($node) {
+                $nodeType = $node->bundle();
+                if ($nodeType == 'page') {
+                    $this->data = $serializer->serialize($node, 'json', ['plugin_id' => 'entity']);
+                    $this->errorCode = '200';
+                    $this->responseStatus = 'OK';
+                    $this->message = 'Success';
+                } else {
+                    $this->errorCode = '403';
+                    $this->responseStatus = 'OK';
+                    $this->message = 'Access denied'; //Invalid Node Type';
+                }
+            } else {
+                $this->errorCode = '404';
+                $this->responseStatus = 'OK';
+                $this->message = 'Access denied';//'Invalid Node ID';
             }
+        } else {
+            $this->errorCode = '403';
+            $this->responseStatus = 'OK';
+            $this->message = 'Access denied';//Invalid API Key;
         }
+        
+        $response->setContent(json_encode(array('status' => array('type'=>$this->responseStatus, 'code'=>$this->errorCode, 'message'=>$this->message), 'content' => $this->data)));
+        return $response;
     }
 }
