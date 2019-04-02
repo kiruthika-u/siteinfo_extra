@@ -41,5 +41,4 @@ use Drupal\system\Form\SiteInformationForm;
 		if($updateInfo && $form_state->getValue('siteapikey')!='')
 		drupal_set_message(t('API Key %key has been updated.',array('%key'=>$form_state->getValue('siteapikey'))), 'status');		
   }
-
  }
