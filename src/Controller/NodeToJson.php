@@ -100,6 +100,5 @@ class NodeToJson extends ControllerBase {
 
 		$response->setContent(json_encode(array('status' => array('type'=>$this->responseStatus,'code'=>$this->errorCode,'message'=>$this->message), 'content' => $this->data)));
 		return $response;
-
 	}
 }
