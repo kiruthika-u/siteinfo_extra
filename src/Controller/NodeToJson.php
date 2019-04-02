@@ -102,5 +102,4 @@ class NodeToJson extends ControllerBase {
 		return $response;
 
 	}
-
 }
