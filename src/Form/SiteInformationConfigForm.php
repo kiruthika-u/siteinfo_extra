@@ -31,7 +31,6 @@ use Drupal\system\Form\SiteInformationForm;
 	/** 
    * {@inheritdoc}
    */
-
 	public function submitForm(array &$form, FormStateInterface $form_state)
   {    
 		$updateInfo = $this->config('system.site')
