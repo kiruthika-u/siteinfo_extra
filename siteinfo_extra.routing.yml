@@ -1,0 +1,19 @@
+siteinfo.site_information_settings:
+  path: '/admin/config/system/site-information'
+  defaults:
+   _form: '\Drupal\siteinfo_extra\Form\SiteInformationConfigForm'
+   _title: 'Site information form'
+  _description: 'Site information form with additioal fields'
+  requirements:
+    _permission: 'administer site configuration'
+
+siteinfo.node_to_json:
+  path: '/page_json/{apikey}/{nodeid}'
+  defaults:
+    _title: 'Node to JSON'
+    _controller: '\Drupal\siteinfo_extra\Controller\NodeToJson::getApiResponce'
+  requirements: 
+    _permission: 'access content'
+
+  
+      

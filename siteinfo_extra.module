@@ -1,0 +1,10 @@
+<?php
+
+/**
+ * @file
+ * Functionalities for site information extra module.
+ */
+
+ /*
+ * Implementation of hook_form_alter()
+ */
